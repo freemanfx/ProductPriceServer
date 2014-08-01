@@ -1,23 +1,17 @@
-package ro.freemanfx.productpriceserver.controllers;
+package ro.freemanfx.productpriceserver;
 
+import com.google.api.server.spi.config.Api;
+import com.google.api.server.spi.config.ApiMethod;
 import com.google.appengine.api.datastore.*;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import ro.freemanfx.productpriceserver.KeyTypes;
 import ro.freemanfx.productpriceserver.domain.Place;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Controller
-@RequestMapping(value = "/place")
-public class PlaceController {
+@Api(name = "place", version = "v1", description = "API for places")
+public class PlaceEndpoint {
 
-    @RequestMapping(value = "all", method = RequestMethod.GET)
-    @ResponseBody
+    @ApiMethod(name = "all", path = "place", httpMethod = ApiMethod.HttpMethod.GET)
     public List<Place> getAll() {
         DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery preparedQuery = datastoreService.prepare(new Query(KeyTypes.PLACE));
@@ -32,8 +26,8 @@ public class PlaceController {
         return places;
     }
 
-    @RequestMapping(value = "add", method = RequestMethod.POST)
-    public void addPlace(@RequestBody Place place) {
+    @ApiMethod(name = "add", path = "place", httpMethod = ApiMethod.HttpMethod.POST)
+    public void addPlace(Place place) {
         DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
         datastoreService.put(place.toNewEntity());
     }
