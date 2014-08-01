@@ -1,5 +1,7 @@
 package ro.freemanfx.productpriceserver.domain;
 
+import com.google.api.server.spi.config.AnnotationBoolean;
+import com.google.api.server.spi.config.ApiResourceProperty;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
@@ -48,11 +50,16 @@ public class Place {
     }
 
     public Entity toNewEntity() {
-        Key key = KeyFactory.createKey(KeyTypes.PLACE, name);
+        Key key = KeyFactory.createKey(KeyTypes.PLACE, getKey());
         Entity entity = new Entity(key);
         entity.setProperty(NAME, name);
         entity.setProperty(LATITUDE, latitude);
         entity.setProperty(LONGITUDE, longitude);
         return entity;
+    }
+
+    @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
+    public String getKey() {
+        return name + latitude + longitude;
     }
 }
