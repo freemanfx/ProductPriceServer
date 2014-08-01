@@ -32,9 +32,9 @@ public class ProductPriceEndpoint {
         for (Entity entity : prepared.asIterable()) {
             String placeKey = (String) entity.getProperty(ProductPrice.PLACE);
             String productKey = (String) entity.getProperty(ProductPrice.PRODUCT);
-            String price = (String) entity.getProperty(ProductPrice.PRICE);
+            Double price = (Double) entity.getProperty(ProductPrice.PRICE);
 
-            productPrices.add(new ProductPrice(findProduct(productKey), findPlace(placeKey), parseDouble(price)));
+            productPrices.add(new ProductPrice(findProduct(productKey), findPlace(placeKey), price));
         }
         return productPrices;
     }
