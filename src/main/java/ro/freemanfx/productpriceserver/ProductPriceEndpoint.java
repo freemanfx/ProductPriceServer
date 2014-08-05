@@ -46,12 +46,15 @@ public class ProductPriceEndpoint {
         ds.put(productPrice.toNewEntity());
     }
 
-    private Product findProduct(String barcode) {
+    @ApiMethod(name = "findproduct", path = "productprice/findproduct", httpMethod = GET)
+    public Product findProduct(@Named("barcode") String barcode) {
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         Key key = KeyFactory.createKey(KeyTypes.PRODUCT, barcode);
         Query query = new Query(KeyTypes.PRODUCT, key);
         Entity entity = ds.prepare(query).asSingleEntity();
-
+        if (entity == null) {
+            return null;
+        }
         String nameProperty = (String) entity.getProperty(Product.NAME);
         String barcodeProperty = (String) entity.getProperty(Product.BARCODE);
         return new Product(nameProperty, barcodeProperty);
