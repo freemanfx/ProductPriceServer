@@ -15,7 +15,6 @@ import static com.google.api.server.spi.config.ApiMethod.HttpMethod.GET;
 import static com.google.api.server.spi.config.ApiMethod.HttpMethod.POST;
 import static com.google.appengine.api.datastore.Query.FilterOperator.EQUAL;
 import static com.google.appengine.api.datastore.Query.FilterPredicate;
-import static java.lang.Double.parseDouble;
 
 @Api(name = "productprice", version = "v1", description = "Get prices for product")
 public class ProductPriceEndpoint {
@@ -65,8 +64,8 @@ public class ProductPriceEndpoint {
         Entity entity = ds.prepare(query).asSingleEntity();
 
         String name = (String) entity.getProperty(Place.NAME);
-        Double latitude = parseDouble((String) entity.getProperty(Place.LATITUDE));
-        Double longitude = parseDouble((String) entity.getProperty(Place.LONGITUDE));
+        Double latitude = (Double) entity.getProperty(Place.LATITUDE);
+        Double longitude = (Double) entity.getProperty(Place.LONGITUDE);
         return new Place(name, latitude, longitude);
     }
 }
