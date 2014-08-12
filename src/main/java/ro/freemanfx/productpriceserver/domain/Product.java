@@ -12,7 +12,6 @@ public class Product {
     private String barcode;
 
     public Product() {
-
     }
 
     public Product(String name, String barcode) {
