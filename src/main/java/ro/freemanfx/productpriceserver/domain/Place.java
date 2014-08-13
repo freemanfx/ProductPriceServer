@@ -2,9 +2,7 @@ package ro.freemanfx.productpriceserver.domain;
 
 import com.google.api.server.spi.config.AnnotationBoolean;
 import com.google.api.server.spi.config.ApiResourceProperty;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.*;
 import ro.freemanfx.productpriceserver.KeyTypes;
 
 public class Place {
@@ -23,6 +21,18 @@ public class Place {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public static Place find(String placeKey) {
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+        Key key = KeyFactory.createKey(KeyTypes.PLACE, placeKey);
+        Query query = new Query(KeyTypes.PLACE, key);
+        Entity entity = ds.prepare(query).asSingleEntity();
+
+        String name = (String) entity.getProperty(Place.NAME);
+        Double latitude = (Double) entity.getProperty(Place.LATITUDE);
+        Double longitude = (Double) entity.getProperty(Place.LONGITUDE);
+        return new Place(name, latitude, longitude);
     }
 
     public String getName() {

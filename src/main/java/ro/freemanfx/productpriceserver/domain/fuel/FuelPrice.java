@@ -9,6 +9,9 @@ public class FuelPrice {
     private Place place;
     private Double price;
 
+    public FuelPrice() {
+    }
+
     public FuelPrice(String fuel, Place place, Double price) {
         this.fuel = fuel;
         this.place = place;
@@ -27,12 +30,12 @@ public class FuelPrice {
         return place;
     }
 
-    public String getKey() {
+    public String makeKey() {
         return fuel + place.getKey() + price.toString();
     }
 
     public Entity toNewEntity() {
-        Entity entity = new Entity(fuel, getKey());
+        Entity entity = new Entity(fuel, makeKey());
         entity.setProperty(KeyTypes.GAS_STATION, place.getKey());
         entity.setProperty(KeyTypes.PRICE, price);
         return entity;

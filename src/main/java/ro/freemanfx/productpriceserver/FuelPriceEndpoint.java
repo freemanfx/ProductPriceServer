@@ -12,11 +12,11 @@ import java.util.List;
 
 import static com.google.api.server.spi.config.ApiMethod.HttpMethod.GET;
 import static com.google.api.server.spi.config.ApiMethod.HttpMethod.POST;
+import static com.google.appengine.api.datastore.FetchOptions.Builder.withLimit;
 
 @Api(name = "fuelprice", version = "v1", description = "Prices for fuels")
 public class FuelPriceEndpoint {
-
-    public static final int FETCH_LIMIT = 100;
+    public static final FetchOptions FETCH_OPTIONS = withLimit(100);
 
     @ApiMethod(name = "add", path = "fuelprice/add", httpMethod = POST)
     public void add(FuelPrice fuelPrice) {
@@ -33,26 +33,13 @@ public class FuelPriceEndpoint {
         Query query = new Query(fuelKey);
         PreparedQuery preparedQuery = ds.prepare(query);
 
-        List<Entity> entities = preparedQuery.asList(FetchOptions.Builder.withLimit(FETCH_LIMIT));
+        List<Entity> entities = preparedQuery.asList(FETCH_OPTIONS);
 
         for (Entity entity : entities) {
-            FuelPrice fuelPrice = new FuelPrice(null, findPlace((String) entity.getProperty(KeyTypes.GAS_STATION)), (Double) entity.getProperty(KeyTypes.PRICE));
+            FuelPrice fuelPrice = new FuelPrice(fuelKey, Place.find((String) entity.getProperty(KeyTypes.GAS_STATION)), (Double) entity.getProperty(KeyTypes.PRICE));
             fuelPrices.add(fuelPrice);
         }
 
         return fuelPrices;
-    }
-
-    private Place findPlace(String keyString) {
-        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-
-        Key key = KeyFactory.createKey(KeyTypes.GAS_STATION, keyString);
-        Query query = new Query(KeyTypes.GAS_STATION, key);
-
-        Entity entity = ds.prepare(query).asSingleEntity();
-        if (entity != null) {
-            return new Place((String) entity.getProperty(Place.NAME), (Double) entity.getProperty(Place.LATITUDE), (Double) entity.getProperty(Place.LONGITUDE));
-        }
-        return null;
     }
 }

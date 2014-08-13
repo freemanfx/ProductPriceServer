@@ -1,8 +1,6 @@
 package ro.freemanfx.productpriceserver.domain;
 
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.*;
 import ro.freemanfx.productpriceserver.KeyTypes;
 
 public class Product {
@@ -17,6 +15,19 @@ public class Product {
     public Product(String name, String barcode) {
         this.name = name;
         this.barcode = barcode;
+    }
+
+    public static Product find(String barcode) {
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+        Key key = KeyFactory.createKey(KeyTypes.PRODUCT, barcode);
+        Query query = new Query(KeyTypes.PRODUCT, key);
+        Entity entity = ds.prepare(query).asSingleEntity();
+        if (entity == null) {
+            return null;
+        }
+        String nameProperty = (String) entity.getProperty(Product.NAME);
+        String barcodeProperty = (String) entity.getProperty(Product.BARCODE);
+        return new Product(nameProperty, barcodeProperty);
     }
 
     public String getName() {
