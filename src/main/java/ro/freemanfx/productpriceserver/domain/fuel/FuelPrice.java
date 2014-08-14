@@ -31,7 +31,7 @@ public class FuelPrice {
     }
 
     public String makeKey() {
-        return fuel + place.getKey() + price.toString();
+        return fuel + place.getKey();
     }
 
     public Entity toNewEntity() {
