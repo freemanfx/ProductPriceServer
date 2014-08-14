@@ -35,7 +35,7 @@ public class ProductPriceEndpoint {
             String productKey = (String) entity.getProperty(ProductPrice.PRODUCT);
             Double price = (Double) entity.getProperty(ProductPrice.PRICE);
 
-            productPrices.add(new ProductPrice(findProduct(productKey), Place.find(placeKey), price));
+            productPrices.add(new ProductPrice(findProduct(productKey), Place.find(placeKey, KeyTypes.PLACE), price));
         }
         return productPrices;
     }

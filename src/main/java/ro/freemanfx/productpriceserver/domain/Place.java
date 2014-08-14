@@ -14,7 +14,6 @@ public class Place {
     private double longitude;
 
     public Place() {
-
     }
 
     public Place(String name, double latitude, double longitude) {
@@ -23,16 +22,20 @@ public class Place {
         this.longitude = longitude;
     }
 
-    public static Place find(String placeKey) {
+    public static Place find(String placeKey, String entityType) {
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        Key key = KeyFactory.createKey(KeyTypes.PLACE, placeKey);
-        Query query = new Query(KeyTypes.PLACE, key);
+        Key key = KeyFactory.createKey(entityType, placeKey);
+        Query query = new Query(entityType, key);
         Entity entity = ds.prepare(query).asSingleEntity();
 
         String name = (String) entity.getProperty(Place.NAME);
         Double latitude = (Double) entity.getProperty(Place.LATITUDE);
         Double longitude = (Double) entity.getProperty(Place.LONGITUDE);
         return new Place(name, latitude, longitude);
+    }
+
+    public static Place from(Entity entity) {
+        return new Place((String) entity.getProperty(NAME), (Double) entity.getProperty(LATITUDE), (Double) entity.getProperty(LONGITUDE));
     }
 
     public String getName() {
@@ -61,6 +64,15 @@ public class Place {
 
     public Entity toNewEntity() {
         Key key = KeyFactory.createKey(KeyTypes.PLACE, getKey());
+        Entity entity = new Entity(key);
+        entity.setProperty(NAME, name);
+        entity.setProperty(LATITUDE, latitude);
+        entity.setProperty(LONGITUDE, longitude);
+        return entity;
+    }
+
+    public Entity toNewGasStationEntity() {
+        Key key = KeyFactory.createKey(KeyTypes.GAS_STATION, getKey());
         Entity entity = new Entity(key);
         entity.setProperty(NAME, name);
         entity.setProperty(LATITUDE, latitude);
