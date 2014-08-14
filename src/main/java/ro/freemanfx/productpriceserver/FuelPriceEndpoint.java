@@ -31,7 +31,7 @@ public class FuelPriceEndpoint {
         List<FuelPrice> fuelPrices = new LinkedList<>();
         DatastoreService ds = getDatastoreService();
 
-        Query query = new Query(fuelKey);
+        Query query = new Query(fuelKey).addSort(KeyTypes.PRICE, Query.SortDirection.ASCENDING);
         PreparedQuery preparedQuery = ds.prepare(query);
         List<Entity> entities = preparedQuery.asList(FETCH_OPTIONS);
 
