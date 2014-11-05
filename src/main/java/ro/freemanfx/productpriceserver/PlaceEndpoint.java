@@ -13,16 +13,21 @@ public class PlaceEndpoint {
 
     @ApiMethod(name = "all", path = "place", httpMethod = ApiMethod.HttpMethod.GET)
     public List<Place> getAll() {
-        DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
-        PreparedQuery preparedQuery = datastoreService.prepare(new Query(KeyTypes.PLACE));
         List<Place> places = new ArrayList<Place>();
+        DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
+
+        PreparedQuery preparedQuery = datastoreService.prepare(new Query(KeyTypes.PLACE));
 
         for (Entity entity : preparedQuery.asIterable()) {
-            String name = (String) entity.getProperty(Place.NAME);
-            Double latitude = (Double) entity.getProperty(Place.LATITUDE);
-            Double longitude = (Double) entity.getProperty(Place.LONGITUDE);
-            places.add(new Place(name, latitude, longitude));
+            places.add(Place.from(entity));
         }
+
+        //GAS STATIONS are also places where they have other products but not the other way around
+        preparedQuery = datastoreService.prepare(new Query(KeyTypes.GAS_STATION));
+        for (Entity entity : preparedQuery.asIterable()) {
+            places.add(Place.from(entity));
+        }
+
         return places;
     }
 

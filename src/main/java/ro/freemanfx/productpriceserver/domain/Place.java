@@ -2,9 +2,7 @@ package ro.freemanfx.productpriceserver.domain;
 
 import com.google.api.server.spi.config.AnnotationBoolean;
 import com.google.api.server.spi.config.ApiResourceProperty;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.*;
 import ro.freemanfx.productpriceserver.KeyTypes;
 
 public class Place {
@@ -16,13 +14,28 @@ public class Place {
     private double longitude;
 
     public Place() {
-
     }
 
     public Place(String name, double latitude, double longitude) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public static Place find(String placeKey, String entityType) {
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+        Key key = KeyFactory.createKey(entityType, placeKey);
+        Query query = new Query(entityType, key);
+        Entity entity = ds.prepare(query).asSingleEntity();
+
+        String name = (String) entity.getProperty(Place.NAME);
+        Double latitude = (Double) entity.getProperty(Place.LATITUDE);
+        Double longitude = (Double) entity.getProperty(Place.LONGITUDE);
+        return new Place(name, latitude, longitude);
+    }
+
+    public static Place from(Entity entity) {
+        return new Place((String) entity.getProperty(NAME), (Double) entity.getProperty(LATITUDE), (Double) entity.getProperty(LONGITUDE));
     }
 
     public String getName() {
@@ -51,6 +64,15 @@ public class Place {
 
     public Entity toNewEntity() {
         Key key = KeyFactory.createKey(KeyTypes.PLACE, getKey());
+        Entity entity = new Entity(key);
+        entity.setProperty(NAME, name);
+        entity.setProperty(LATITUDE, latitude);
+        entity.setProperty(LONGITUDE, longitude);
+        return entity;
+    }
+
+    public Entity toNewGasStationEntity() {
+        Key key = KeyFactory.createKey(KeyTypes.GAS_STATION, getKey());
         Entity entity = new Entity(key);
         entity.setProperty(NAME, name);
         entity.setProperty(LATITUDE, latitude);
